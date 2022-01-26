@@ -30,18 +30,6 @@ public class Node<T>{
         return prev;
     }
 
-    public void delete(){
-        if(prev == null && next != null) {
-            next.setPrev(null);
-        }
-        else if(prev != null && next == null) {
-            prev.setNext(null);
-        }
-        else if(prev != null && next != null){
-            prev.setNext(next);
-            next.setPrev(prev);
-        }
-    }
 
     @Override
     public String toString(){

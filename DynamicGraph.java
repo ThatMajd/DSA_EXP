@@ -46,16 +46,28 @@ public class DynamicGraph {
         GraphNode prev = node.getPrev();
         GraphNode next = node.getNext();
         if (prev != null) {
-            prev.setNext(next);
+            if(next == null){
+                prev.setNext(null);
+                ntail = prev;
+            }
+            else {
+                prev.setNext(next);
+                next.setPrev(prev);
+            }
         }
-        if (next != null) {
-            next.setPrev(prev);
+        else {
+            if(next != null){
+                next.setPrev(null);
+                nhead = next;
+            }
         }
         node.delete();
+
     }
 
     public GraphEdge insertEdge(GraphNode from, GraphNode to){
         //System.out.println("------ Inserting" + from.getKey() +" to "+ to.getKey());
+
         GraphEdge edge = new GraphEdge(from,to);
         if (ehead == null){
             ehead = edge;
@@ -70,44 +82,11 @@ public class DynamicGraph {
     }
     public void deleteEdge(GraphEdge edge){
         // AAAAAAAAAAAAAAAAAAAAAAA
-
-
+        //System.out.println("------ Deleting" + edge.src.data.getKey() +" to "+ edge.dst.data.getKey());
+//        if (edge.src.data.getKey() ==  1491 && edge.dst.data.getKey() == 10058){
+//            System.out.println("U FOKIN");
+//        }
         edge.delete();
-    }
-
-    private LinkedList<GraphNode> flipList(LinkedList<GraphNode> fOrder){
-        LinkedList<GraphNode> res = new LinkedList<GraphNode>();
-        while (fOrder.head != null){
-            res.insert(fOrder.pop().data);
-        }
-        return res;
-    }
-
-    private void changeOrderVerticies(LinkedList<GraphNode> fOrder){
-
-        nhead = fOrder.head.data;
-        ntail = fOrder.tail.data;
-
-        Node<GraphNode> temp = fOrder.peek();
-        while (temp != null) {
-            if(temp.getPrev() == null){
-                // first element in fOrder
-                temp.data.setPrev(null);
-            }
-            else{
-                GraphNode node_prev = temp.getPrev().data;
-                temp.data.setPrev(node_prev);
-            }
-            if(temp.getNext() == null){
-                // last element in fOrder
-                temp.data.setNext(null);
-            }
-            else {
-                GraphNode node_next = temp.getNext().data;
-                temp.data.setNext(node_next);
-            }
-            temp = temp.getNext();
-        }
     }
 
     public RootedTree scc(){
@@ -127,7 +106,6 @@ public class DynamicGraph {
             }
             temp = temp.getNext();
         }
-
         return fOrder;
     }
     public RootedTree DFS2(LinkedList<GraphNode> fOrder){
@@ -136,11 +114,9 @@ public class DynamicGraph {
         DFS_init();
 
         Node<GraphNode> temp = fOrder.head;
-
         GraphNode dummy = new GraphNode(0);
         RootedTree T = new RootedTree();
         T.setRoot(dummy);
-
 
         while (temp != null){
             if(temp.data.color == 0){
@@ -177,6 +153,28 @@ public class DynamicGraph {
         fOrder.place_first(node);
     }
 
+    public void DFS_Visit_transpose(GraphNode node,LinkedList<GraphNode> fOrder,RootedTree B){
+        // white=0,grey=1,black=2;
+        //System.out.println("--" + node.getKey());
+        time++;
+        node.d_time = time;
+        node.color = 1;
+        Node<GraphNode> temp = node.parents.head;
+        while (temp != null){
+            if(temp.data.color == 0){
+                RootedTree sT = new RootedTree();
+                sT.setRoot(temp.data);
+                B.subRooted.insert(sT);
+
+                temp.data.pi = node;
+                DFS_Visit_transpose(temp.data,fOrder,sT);
+            }
+            temp = temp.getNext();
+        }
+        node.color = 2;
+        time++;
+        node.f_time = time;
+    }
     private void DFS_init(){
         GraphNode temp = nhead;
         while (temp != null){
@@ -202,29 +200,6 @@ public class DynamicGraph {
         queue.insert(source);
     }
 
-    public void DFS_Visit_transpose(GraphNode node,LinkedList<GraphNode> fOrder,RootedTree B){
-        // white=0,grey=1,black=2;
-        //System.out.println("--" + node.getKey());
-        time++;
-        node.d_time = time;
-        node.color = 1;
-        Node<GraphNode> temp = node.parents.head;
-        while (temp != null){
-            if(temp.data.color == 0){
-                RootedTree sT = new RootedTree();
-                sT.setRoot(temp.data);
-                B.subRooted.insert(sT);
-
-                temp.data.pi = node;
-                DFS_Visit_transpose(temp.data,fOrder,sT);
-            }
-            temp = temp.getNext();
-        }
-        node.color = 2;
-        time++;
-        node.f_time = time;
-
-    }
 
 //    public void DFS_Visit_transpose(GraphNode node,LinkedList<GraphNode> fOrder){
 //        // white=0,grey=1,black=2;
@@ -308,7 +283,7 @@ public class DynamicGraph {
     public void print(){
         GraphNode temp = nhead;
         while (temp != null){
-            System.out.println((temp).getKey() + ", "+(temp).f_time);
+            System.out.println((temp).getKey() + ", "+(temp).getInDegree() + ", "+(temp).getOutDegree());
             temp = temp.getNext();
         }
     }

@@ -22,9 +22,7 @@ public class RootedTree {
         return root;
     }
 
-    public void printByLayer(DataOutputStream out){
-        printLayerAux(root,out);
-    }
+
     public void preorderPrint(DataOutputStream out) throws IOException {
         StringBuilder output = new StringBuilder();
 
@@ -51,19 +49,23 @@ public class RootedTree {
         }
     }
 
+    public void printByLayer(DataOutputStream out){
+        printLayerAux(root,out);
+    }
+
     public void printLayerAux(GraphNode node, DataOutputStream out){
         LinkedList <GraphNode> queue = new LinkedList<>();
         queue.insert(node);
         while (true){
-            int current_level = queue.size;
-            if (current_level == 0){
+            int node_count = queue.size;
+            if (node_count == 0){
                 break;
             }
-            while (current_level > 0) {
+            while (node_count > 0) {
 
                 GraphNode nd = queue.peek().data;
                 System.out.print(nd.getKey());
-                if (current_level > 1){
+                if (node_count > 1){
                     System.out.print(",");
                 }
 
@@ -72,7 +74,7 @@ public class RootedTree {
                     queue.insert(temp.data.root);
                     temp = temp.getNext();
                 }
-                current_level--;
+                node_count--;
             }
             if(queue.head != null) {
                 System.out.println();

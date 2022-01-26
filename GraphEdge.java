@@ -6,16 +6,13 @@ public class GraphEdge extends Nodeable<GraphEdge>{
     public GraphEdge prev;
 
     public GraphEdge(GraphNode f, GraphNode t){
-        // put t as child of f and return it
+
         f.children.place_first(t);
         t.parents.place_first(f);
         dst = f.children.head;
         src = t.parents.head;
     }
     public void delete(){
-
-        // src.getPrev() is in dst.data.parents
-        // dst is in src.children
 
         if (src.getPrev() == null && src.getNext() != null){
             // src is the head but there are other nodes in the list
@@ -35,14 +32,13 @@ public class GraphEdge extends Nodeable<GraphEdge>{
             dst.data.parents.head = null;
             dst.data.parents.tail = null;
         }
-
         if (dst.getPrev() == null && dst.getNext() != null){
             dst.getNext().setPrev(null);
             src.data.children.head = dst.getNext();
         }
         else if (dst.getPrev() != null && dst.getNext() == null){
             dst.getPrev().setNext(null);
-            src.data.children.head = dst.getPrev();
+            src.data.children.tail = dst.getPrev();
         }
         else if (dst.getPrev() != null && dst.getNext() != null){
             dst.getPrev().setNext(dst.getNext());
@@ -52,9 +48,9 @@ public class GraphEdge extends Nodeable<GraphEdge>{
             src.data.children.head = null;
             src.data.children.tail = null;
         }
+
         src = null;
         dst = null;
-        
 
         if(prev == null && next != null) {
             next.setPrev(null);

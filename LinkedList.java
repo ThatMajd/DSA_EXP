@@ -25,21 +25,7 @@ public class LinkedList <T> {
         return node;
     }
 
-    public Node<T> pop(){
-        size--;
-        Node<T> res;
-        if (tail.getPrev() != null){
-            res = tail;
-            Node<T> prev = tail.getPrev();
-            prev.setNext(null);
-            tail = prev;
-            return res;
-        }
-        res = head;
-        head = null;
-        tail = null;
-        return res;
-    }
+
     public Node<T> peek(){
         size--;
         Node<T> res;
@@ -74,8 +60,16 @@ public class LinkedList <T> {
             System.out.println(((GraphNode) temp.data).getKey() + ", "+((GraphNode) temp.data).f_time);
             temp = temp.getNext();
         }
+//        while (temp != null && temp.data instanceof GraphEdge ){
+//            System.out.println(((GraphEdge) temp.data).src.data.getKey() + ", "+((GraphEdge) temp.data).dst.data.getKey());
+//            temp = temp.getNext();
+//        }
         while (temp != null && temp.data instanceof RootedTree ){
             System.out.println(((RootedTree) temp.data).root);
+            temp = temp.getNext();
+        }
+        while (temp != null && temp.data instanceof Integer ){
+            System.out.println((temp.data));
             temp = temp.getNext();
         }
     }
